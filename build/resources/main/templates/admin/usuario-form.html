@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments/layout :: head(#{admin.usuarios.form.title})"></head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+<header th:replace="fragments/layout :: navbar"></header>
+
+<main class="container py-4 flex-grow-1">
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-bottom">
+      <!-- título vem do controller, mas tem fallback i18n -->
+      <h1 class="h5 mb-0"
+          th:text="${tituloPagina != null ? tituloPagina : #messages.msg('admin.usuarios.form.heading.new')}">
+        Novo usuário
+      </h1>
+    </div>
+    <div class="card-body">
+      <form th:action="${acao}" method="post" th:object="${usuario}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label small"
+                   th:text="#{admin.usuarios.form.label.nome}">Nome</label>
+            <input type="text" class="form-control" th:field="*{nome}" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label small"
+                   th:text="#{admin.usuarios.form.label.email}">E-mail</label>
+            <input type="email" class="form-control" th:field="*{email}" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label small"
+                   th:text="#{admin.usuarios.form.label.empresa}">Empresa</label>
+            <select class="form-select" th:field="*{empresaId}" required>
+              <option th:each="e : ${empresas}"
+                      th:value="${e.id}"
+                      th:text="${e.nome}">
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label small"
+                   th:text="#{admin.usuarios.form.label.time}">Time (opcional)</label>
+            <select class="form-select" th:field="*{timeId}">
+              <option value=""
+                      th:text="#{admin.usuarios.form.option.noTeam}">
+                -- Sem time específico --
+              </option>
+              <option th:each="t : ${times}"
+                      th:value="${t.id}"
+                      th:text="${t.nome}">
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label small"
+                   th:text="#{admin.usuarios.form.label.ativo}">Ativo</label>
+            <select class="form-select" th:field="*{ativo}">
+              <option th:value="true"
+                      th:text="#{admin.usuarios.form.option.ativo.sim}">Sim</option>
+              <option th:value="false"
+                      th:text="#{admin.usuarios.form.option.ativo.nao}">Não</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+          <a class="btn btn-outline-secondary" th:href="@{/admin/usuarios}">
+            <span th:text="#{admin.usuarios.form.button.voltar}">Voltar</span>
+          </a>
+          <button class="btn btn-primary" type="submit">
+            <span th:text="#{admin.usuarios.form.button.salvar}">Salvar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>

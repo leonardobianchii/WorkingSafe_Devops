@@ -1,0 +1,70 @@
+/* Fundo geral da página de login */
+.login-page {
+    background: linear-gradient(135deg, #0d47a1, #000000);
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+/* Card central */
+.login-card {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 100%;
+}
+
+/* Ícone com WS */
+.brand-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d47a1, #42a5f5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* Nome da marca */
+.brand-name {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #0d47a1;
+}
+
+/* Subtítulo */
+.subtitle {
+    font-size: 0.9rem;
+    color: #555555;
+}
+
+/* Botão principal */
+.login-btn {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Troca de idioma */
+.lang-switch {
+    font-size: 0.85rem;
+}
+
+.lang-switch a {
+    text-decoration: none;
+    color: #0d47a1;
+    margin: 0 0.1rem;
+}
+
+.lang-switch a.active {
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.lang-switch span {
+    color: #333333;
+}

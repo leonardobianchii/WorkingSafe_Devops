@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments/layout :: head(#{home.colab.title})"></head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<header th:replace="fragments/layout :: navbar"></header>
+
+<main class="container py-4 flex-grow-1">
+  <div class="row g-4">
+
+    <!-- Boas-vindas -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="h5 mb-1">
+              <span th:text="#{home.colab.greeting}">Olá,</span>
+              <span th:text="${usuario != null ? usuario.nome : #messages.msgOrNull('home.colab.greeting.fallback')}">
+                colaborador
+              </span> 👋
+            </h2>
+            <p class="text-muted mb-0 small"
+               th:text="#{home.colab.greeting.subtitle}">
+              Como você está hoje? Registrar seu check-in ajuda o sistema a cuidar melhor de você.
+            </p>
+          </div>
+          <div class="text-end d-none d-md-block">
+            <span class="badge bg-primary-subtle text-primary">
+              <i class="bi bi-calendar-event"></i>
+              <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coluna da esquerda: formulário de check-in -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <strong>
+            <i class="bi bi-clipboard-check"></i>
+            <span th:text="#{home.colab.checkin.card.title}">Check-in de bem-estar</span>
+          </strong>
+        </div>
+        <div class="card-body">
+          <form th:action="@{/view/checkins}" method="post" th:object="${checkinForm}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="row g-3">
+              <div class="col-6">
+                <label class="form-label small" for="humor"
+                       th:text="#{home.colab.checkin.mood}">Humor (1–5)</label>
+                <input id="humor" type="number" min="1" max="5" class="form-control"
+                       th:field="*{humor}" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small" for="foco"
+                       th:text="#{home.colab.checkin.focus}">Foco (1–5)</label>
+                <input id="foco" type="number" min="1" max="5" class="form-control"
+                       th:field="*{foco}" required>
+              </div>
+
+              <div class="col-6">
+                <label class="form-label small" for="minutosPausas"
+                       th:text="#{home.colab.checkin.breaks}">Pausas (minutos)</label>
+                <input id="minutosPausas" type="number" min="0" max="480" class="form-control"
+                       th:field="*{minutosPausas}">
+              </div>
+              <div class="col-6">
+                <label class="form-label small" for="horasTrabalhadas"
+                       th:text="#{home.colab.checkin.hours}">Horas trabalhadas</label>
+                <input id="horasTrabalhadas" type="number" step="0.25" min="0" max="24" class="form-control"
+                       th:field="*{horasTrabalhadas}">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label small" for="tags"
+                       th:text="#{home.colab.checkin.tags}">Tags (ex.: reunião, entrega)</label>
+                <input id="tags" type="text" class="form-control"
+                       th:field="*{tags}">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label small" for="observacoes"
+                       th:text="#{home.colab.checkin.notes}">Observações</label>
+                <textarea id="observacoes" rows="3" class="form-control"
+                          th:field="*{observacoes}"></textarea>
+              </div>
+
+              <div class="col-12 d-grid">
+                <button class="btn btn-primary" type="submit"
+                        th:text="#{home.colab.checkin.button}">
+                  Registrar check-in
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <p class="text-muted mt-2 mb-0 small"
+             th:text="#{home.colab.checkin.disclaimer}">
+            Os dados são usados apenas de forma agregada para gestores. Seu nome não aparece nos relatórios.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coluna da direita: recomendações + últimos check-ins -->
+    <div class="col-lg-6">
+
+      <!-- Recomendações ativas -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-white border-bottom">
+          <strong>
+            <i class="bi bi-stars"></i>
+            <span th:text="#{home.colab.recs.card.title}">Recomendações da IA para você</span>
+          </strong>
+        </div>
+        <div class="card-body">
+          <div th:if="${#lists.isEmpty(recomendacoesAtuais)}" class="text-muted small"
+               th:text="#{home.colab.recs.empty}">
+            Ainda não há recomendações ativas. Faça alguns check-ins para o sistema te conhecer melhor.
+          </div>
+
+          <div th:each="rec, recStat : ${recomendacoesAtuais}"
+               class="mb-3 pb-3 border-bottom"
+               th:classappend="${recStat.last} ? 'border-0'">
+            <span class="badge bg-primary-subtle text-primary small mb-1"
+                  th:text="${rec.categoria}">PAUSAS</span>
+            <p class="mb-1" th:text="${rec.descricao}">Texto da recomendação...</p>
+            <small class="text-muted">
+              <span th:text="#{home.colab.recs.validUntil}">Válido até</span>
+              <span th:text="${#temporals.format(rec.dataValidade, 'dd/MM/yyyy')}">31/12/2025</span>
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Últimos check-ins -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <strong>
+            <i class="bi bi-clock-history"></i>
+            <span th:text="#{home.colab.history.card.title}">Seus últimos check-ins</span>
+          </strong>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm mb-0 align-middle">
+              <thead class="table-light">
+              <tr>
+                <th th:text="#{home.colab.history.col.date}">Data</th>
+                <th th:text="#{home.colab.history.col.mood}">Humor</th>
+                <th th:text="#{home.colab.history.col.focus}">Foco</th>
+                <th th:text="#{home.colab.history.col.breaks}">Pausas</th>
+                <th th:text="#{home.colab.history.col.hours}">Horas</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="c : ${checkinsRecentes}">
+                <td th:text="${#temporals.format(c.dataHora, 'dd/MM')}">12/11</td>
+                <td th:text="${c.humor}">4</td>
+                <td th:text="${c.foco}">5</td>
+                <td th:text="${c.minutosPausas}">30</td>
+                <td th:text="${c.horasTrabalhadas}">8</td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(checkinsRecentes)}">
+                <td colspan="5" class="text-center text-muted small py-3"
+                    th:text="#{home.colab.history.empty}">
+                  Nenhum check-in registrado ainda.
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+
+</body>
+</html>

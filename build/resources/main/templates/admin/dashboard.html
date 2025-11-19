@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments/layout :: head(#{admin.dashboard.title})"></head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+<header th:replace="fragments/layout :: navbar"></header>
+
+<main class="container py-4 flex-grow-1">
+  <h1 class="h4 mb-3">
+    <i class="bi bi-speedometer2"></i>
+    <span th:text="#{admin.dashboard.heading}">Painel do gestor</span>
+  </h1>
+  <p class="text-muted small mb-4"
+     th:text="#{admin.dashboard.subtitle}">
+    Visão agregada de bem-estar, risco de burnout e engajamento dos times.
+  </p>
+
+  <!-- KPIs -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-1"
+             th:text="#{admin.dashboard.kpi.wellbeing}">Índice médio de bem-estar (semana)</p>
+          <h2 class="h4 mb-0 text-primary"
+              th:text="${kpiMediaIndice != null ? #numbers.formatDecimal(kpiMediaIndice, 1, 2) : '--'}">0.78</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-1"
+             th:text="#{admin.dashboard.kpi.risk}">Risco médio de burnout</p>
+          <h2 class="h4 mb-0 text-danger"
+              th:text="${kpiMediaRisco != null ? #numbers.formatDecimal(kpiMediaRisco, 1, 2) : '--'}">0.32</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-1"
+             th:text="#{admin.dashboard.kpi.adhesion}">Adesão aos check-ins</p>
+          <h2 class="h4 mb-0 text-success"
+              th:text="${kpiAdesao != null ? kpiAdesao + '%': '--'}">82%</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-1"
+             th:text="#{admin.dashboard.kpi.alerts}">Alertas ativos</p>
+          <h2 class="h4 mb-0 text-warning"
+              th:text="${kpiQtdAlertasAtivos != null ? kpiQtdAlertasAtivos : 0}">5</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Tabela com média por time -->
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-bottom">
+          <strong th:text="#{admin.dashboard.table.title}">
+            Médias por time (últimas semanas)
+          </strong>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm mb-0 align-middle">
+              <thead class="table-light">
+              <tr>
+                <th th:text="#{admin.dashboard.table.col.week}">Semana</th>
+                <th th:text="#{admin.dashboard.table.col.company}">Empresa</th>
+                <th th:text="#{admin.dashboard.table.col.team}">Time</th>
+                <th th:text="#{admin.dashboard.table.col.users}">Usuários</th>
+                <th th:text="#{admin.dashboard.table.col.index}">Índice</th>
+                <th th:text="#{admin.dashboard.table.col.risk}">Risco</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="agg : ${aggSemanais}">
+                <!-- inicioSemana é LocalDate -->
+                <td th:text="${#temporals.format(agg.inicioSemana, 'dd/MM')}">04/11</td>
+
+                <td th:text="${agg.empresaId}">1</td>
+                <td th:text="${agg.timeId != null ? agg.timeId : #messages.msg('admin.dashboard.scope.general')}">
+                  Geral
+                </td>
+
+                <td th:text="${agg.qtdUsuarios}">15</td>
+                <td th:text="${#numbers.formatDecimal(agg.mediaIndice, 1, 2)}">0.80</td>
+                <td th:text="${#numbers.formatDecimal(agg.mediaRisco, 1, 2)}">0.35</td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(aggSemanais)}">
+                <td colspan="6" class="text-center text-muted small py-3"
+                    th:text="#{admin.dashboard.table.empty}">
+                  Nenhum dado agregado ainda.
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertas recentes -->
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-bottom">
+          <strong th:text="#{admin.dashboard.alerts.title}">Alertas recentes</strong>
+        </div>
+        <div class="card-body">
+          <div th:if="${#lists.isEmpty(alertasRecentes)}" class="text-muted small"
+               th:text="#{admin.dashboard.alerts.empty}">
+            Nenhum alerta crítico nas últimas 24h.
+          </div>
+
+          <div th:each="al : ${alertasRecentes}" class="mb-3">
+            <span class="badge small"
+                  th:classappend="${al.severidade == 'ALTA'} ? 'bg-danger' :
+                                  ${al.severidade == 'MEDIA'} ? 'bg-warning text-dark' : 'bg-secondary' "
+                  th:text="${al.severidade}">ALTA</span>
+            <span class="badge bg-light text-muted border ms-1 small"
+                  th:text="${al.tpAlerta}">RISCO_ALTO</span>
+
+            <p class="mb-1 small" th:text="${al.dsAlerta}">
+              Colaborador com risco alto de burnout há 3 dias.
+            </p>
+            <small class="text-muted">
+              <i class="bi bi-clock"></i>
+              <span th:text="${#temporals.format(al.dtCriacao, 'dd/MM HH:mm')}">12/11 09:30</span>
+              •
+              <span th:text="${al.time != null ? al.time.nmTime : #messages.msg('admin.dashboard.scope.general')}">
+                Squad A
+              </span>
+            </small>
+            <hr class="my-2"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>

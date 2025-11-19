@@ -106,11 +106,11 @@ public class AdminUsuarioWebController {
     }
 
     /**
-     * "Exclusão" lógica: marca fl_ativo = 'N'.
+     * Exclusão.
      */
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/excluir")
     public String excluir(@PathVariable Long id) {
-        usuarioService.excluir(id);
+        usuarioService.excluir(id);   // esse já está fazendo delete de verdade
         return "redirect:/admin/usuarios";
     }
 }
