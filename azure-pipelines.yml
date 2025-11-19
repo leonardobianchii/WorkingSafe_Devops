@@ -1,4 +1,4 @@
-# azure-pipelines.yml  (CI - somente build + push)
+#(CI - build + push)
 
 trigger:
   branches:
