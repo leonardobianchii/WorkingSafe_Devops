@@ -58,11 +58,16 @@
               </a>
 
               <!-- Botão excluir -->
-              <form th:action="@{'/admin/usuarios/' + ${u.id} + '/excluir'}"
-                    method="post" class="d-inline">
+              <form th:action="@{'/admin/usuarios/' + ${u.id}}"
+                    method="post"
+                    class="d-inline">
+
                 <input type="hidden"
                        th:name="${_csrf.parameterName}"
                        th:value="${_csrf.token}"/>
+
+                <input type="hidden" name="_method" value="DELETE"/>
+
                 <button class="btn btn-outline-danger btn-sm" type="submit"
                         th:onclick="|return confirm('#{admin.usuarios.list.confirmDelete}');|">
                   <i class="bi bi-trash"></i>
