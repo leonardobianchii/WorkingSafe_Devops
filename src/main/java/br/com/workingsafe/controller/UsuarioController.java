@@ -48,9 +48,9 @@ public class UsuarioController {
         return ResponseEntity.ok(atualizado);
     }
 
-    @PatchMapping("/{id}/desativar")
-    public ResponseEntity<Void> desativar(@PathVariable Long id) {
-        service.desativar(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        service.excluir(id);
+        return ResponseEntity.noContent().build(); // 204
     }
 }

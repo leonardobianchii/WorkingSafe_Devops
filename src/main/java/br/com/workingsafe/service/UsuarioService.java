@@ -38,7 +38,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    @CacheEvict(allEntries = true) // limpamos caches relacionados a usuario
+    @CacheEvict(allEntries = true)
     public UsuarioDto criar(UsuarioDto dto) {
         if (usuarioRepository.existsByEmail(dto.email())) {
             throw new IllegalArgumentException("Ja existe usuario com esse e-mail.");
@@ -54,14 +54,13 @@ public class UsuarioService {
         }
 
         Usuario usuario = mapper.toEntity(dto, empresa, time);
-        // senha fixa por papel – nao mexemos aqui
 
         usuario = usuarioRepository.save(usuario);
         return mapper.toDto(usuario);
     }
 
     @Transactional
-    @CacheEvict(allEntries = true) // qualquer update invalida os caches
+    @CacheEvict(allEntries = true)
     public UsuarioDto atualizar(Long id, UsuarioDto dto) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado."));
@@ -101,19 +100,17 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public Page<UsuarioDto> listarPorEmpresa(Long empresaId, Pageable pageable) {
-        // aqui eu NAO cacheei por causa do Pageable (a chave ficaria bem chata),
-        // mas o requisito de cache ja fica bem coberto pelos metodos abaixo
         return usuarioRepository.findByEmpresaId(empresaId, pageable)
                 .map(mapper::toDto);
     }
 
     @Transactional
     @CacheEvict(allEntries = true)
-    public void desativar(Long id) {
+    public void excluir(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario nao encontrado."));
-        usuario.setAtivo("N");
-        usuarioRepository.save(usuario);
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        usuarioRepository.delete(usuario);
     }
 
     // ===== NOVOS METODOS PARA WEB/SECURITY =====
