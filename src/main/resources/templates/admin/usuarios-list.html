@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments/layout :: head(#{admin.usuarios.title})"></head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+<header th:replace="fragments/layout :: navbar"></header>
+
+<main class="container py-4 flex-grow-1">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h5 mb-0">
+      <i class="bi bi-people"></i>
+      <span th:text="#{admin.usuarios.title}">Gestão de usuários</span>
+    </h1>
+    <a class="btn btn-primary btn-sm" th:href="@{/admin/usuarios/novo}">
+      <i class="bi bi-plus"></i>
+      <span th:text="#{admin.usuarios.list.new}">Novo usuário</span>
+    </a>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0 align-middle">
+          <thead class="table-light">
+          <tr>
+            <th th:text="#{admin.usuarios.list.col.name}">Nome</th>
+            <th th:text="#{admin.usuarios.list.col.email}">E-mail</th>
+            <th th:text="#{admin.usuarios.list.col.company}">Empresa</th>
+            <th th:text="#{admin.usuarios.list.col.team}">Time</th>
+            <th th:text="#{admin.usuarios.list.col.active}">Ativo</th>
+            <th class="text-end" th:text="#{admin.usuarios.list.col.actions}">Ações</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="u : ${usuarios}">
+            <td th:text="${u.nome}">Ana Gestora</td>
+            <td th:text="${u.email}">ana@empresa.com</td>
+            <td th:text="${u.empresaNome}">TechMind</td>
+            <td th:text="${u.timeNome}">Squad A</td>
+            <td>
+              <span class="badge"
+                    th:classappend="${u.ativo} ? 'bg-success' : 'bg-secondary'">
+                <span th:text="${u.ativo} ? #{admin.usuarios.list.active} : #{admin.usuarios.list.inactive}">
+                  Ativo
+                </span>
+              </span>
+            </td>
+            <td class="text-end">
+              <!-- Botão editar -->
+              <a class="btn btn-outline-primary btn-sm me-1"
+                 th:href="@{'/admin/usuarios/' + ${u.id} + '/editar'}">
+                <i class="bi bi-pencil"></i>
+                <span class="d-none d-md-inline ms-1"
+                      th:text="#{admin.usuarios.list.edit}">Editar</span>
+              </a>
+
+              <!-- Botão excluir -->
+              <form th:action="@{'/admin/usuarios/' + ${u.id} + '/excluir'}"
+                    method="post" class="d-inline">
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}"/>
+                <button class="btn btn-outline-danger btn-sm" type="submit"
+                        th:onclick="|return confirm('#{admin.usuarios.list.confirmDelete}');|">
+                  <i class="bi bi-trash"></i>
+                  <span class="d-none d-md-inline ms-1"
+                        th:text="#{admin.usuarios.list.delete}">Excluir</span>
+                </button>
+              </form>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(usuarios)}">
+            <td colspan="6" class="text-center text-muted small py-3"
+                th:text="#{admin.usuarios.list.empty}">
+              Nenhum usuário cadastrado.
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>

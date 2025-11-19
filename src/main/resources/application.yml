@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: workingsafe
+
+  datasource:
+    url: jdbc:sqlserver://srv-workingsafe.database.windows.net:1433;database=db-workingsafe;encrypt=true;trustServerCertificate=false;loginTimeout=30;
+    username: rm558576
+    password: Fiap@devops2025
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: false
+
+  sql:
+    init:
+      mode: never
+
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+
+  web:
+    locale: pt_BR
+    locale-resolver: accept_header
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
