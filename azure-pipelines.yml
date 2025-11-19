@@ -1,0 +1,48 @@
+#(CI - build + push)
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  appName: 'workingsafe-api'                
+  acrName: 'acrworkingsafe'                 
+  acrLoginServer: 'acrworkingsafe.azurecr.io'
+  imageRepository: 'fiap/$(appName)'        
+  imageTag: '$(Build.BuildId)'              
+  dockerRegistryServiceConnection: 'sc-acr-workingsafe'
+
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+
+steps:
+  # 1) Checkout do código
+  - checkout: self
+
+  # 2) Build + Push da imagem pro ACR
+  - task: Docker@2
+    displayName: 'Build and push image to ACR'
+    inputs:
+      command: buildAndPush
+      containerRegistry: '$(dockerRegistryServiceConnection)'
+      repository: '$(imageRepository)'
+      dockerfile: '$(dockerfilePath)'
+      tags: |
+        $(imageTag)
+      buildContext: '$(Build.SourcesDirectory)'
+
+  # 3) Gerar um artefato simples só pra Release enxergar o build
+  - script: |
+      echo "IMAGE_NAME=$(acrLoginServer)/$(imageRepository)"  > build-info.txt
+      echo "IMAGE_TAG=$(Build.BuildId)"                      >> build-info.txt
+    displayName: 'Gerar arquivo de build-info'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publicar artefato de build'
+    inputs:
+      PathtoPublish: 'build-info.txt'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
