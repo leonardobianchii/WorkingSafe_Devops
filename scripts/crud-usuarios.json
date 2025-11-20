@@ -1,0 +1,133 @@
+{
+    "resource": "Usuario",
+    "baseUrl": "/api/usuarios",
+    "description": "CRUD da entidade Usuario da API WorkingSafe. Os campos empresaId e timeId referenciam Empresa e TimeEquipe.",
+  
+    "examples": [
+      {
+        "operation": "CREATE",
+        "method": "POST",
+        "url": "/api/usuarios",
+        "description": "Cadastro de um novo usuário colaborador",
+        "requestBody": {
+          "nome": "Ana Gestora",
+          "email": "ana.gestora@techmind.com",
+          "empresaId": 1,
+          "timeId": 1,
+          "ativo": true,
+          "timeZone": "America/Sao_Paulo"
+        },
+        "responseBodyExample": {
+          "id": 1,
+          "nome": "Ana Gestora",
+          "email": "ana.gestora@techmind.com",
+          "empresaId": 1,
+          "timeId": 1,
+          "ativo": true,
+          "timeZone": "America/Sao_Paulo",
+          "dataCriacao": "2025-02-01T10:15:30Z"
+        }
+      },
+  
+      {
+        "operation": "READ_ALL",
+        "method": "GET",
+        "url": "/api/usuarios",
+        "description": "Lista paginada de usuários",
+        "queryParamsExample": {
+          "page": 0,
+          "size": 10,
+          "empresaId": 1
+        },
+        "responseBodyExample": {
+          "content": [
+            {
+              "id": 1,
+              "nome": "Ana Gestora",
+              "email": "ana.gestora@techmind.com",
+              "empresaId": 1,
+              "timeId": 1,
+              "ativo": true,
+              "timeZone": "America/Sao_Paulo"
+            },
+            {
+              "id": 2,
+              "nome": "Bruno Colaborador",
+              "email": "bruno.colab@techmind.com",
+              "empresaId": 1,
+              "timeId": 2,
+              "ativo": true,
+              "timeZone": "America/Sao_Paulo"
+            }
+          ],
+          "page": 0,
+          "size": 10,
+          "totalElements": 2,
+          "totalPages": 1
+        }
+      },
+  
+      {
+        "operation": "READ_BY_ID",
+        "method": "GET",
+        "url": "/api/usuarios/{id}",
+        "description": "Busca de um usuário específico pelo ID",
+        "pathParamsExample": {
+          "id": 3
+        },
+        "responseBodyExample": {
+          "id": 3,
+          "nome": "Carla Colaboradora",
+          "email": "carla.colab@healthcorp.com",
+          "empresaId": 2,
+          "timeId": 3,
+          "ativo": true,
+          "timeZone": "America/Sao_Paulo",
+          "dataCriacao": "2025-02-01T11:00:00Z"
+        }
+      },
+  
+      {
+        "operation": "UPDATE",
+        "method": "PUT",
+        "url": "/api/usuarios/{id}",
+        "description": "Atualização de dados de um usuário existente",
+        "pathParamsExample": {
+          "id": 4
+        },
+        "requestBody": {
+          "nome": "Diego Gestor",
+          "email": "diego.gestor@edufocus.com",
+          "empresaId": 3,
+          "timeId": 4,
+          "ativo": false,
+          "timeZone": "America/Sao_Paulo"
+        },
+        "responseBodyExample": {
+          "id": 4,
+          "nome": "Diego Gestor",
+          "email": "diego.gestor@edufocus.com",
+          "empresaId": 3,
+          "timeId": 4,
+          "ativo": false,
+          "timeZone": "America/Sao_Paulo",
+          "dataAtualizacao": "2025-02-10T09:30:00Z"
+        }
+      },
+  
+      {
+        "operation": "DELETE",
+        "method": "DELETE",
+        "url": "/api/usuarios/{id}",
+        "description": "Exclusão lógica ou física de um usuário",
+        "pathParamsExample": {
+          "id": 5
+        },
+        "responseBodyExample": {
+          "status": "OK",
+          "message": "Usuário removido com sucesso"
+        }
+      }
+    ]
+  }
+  
