@@ -1,5 +1,5 @@
 # 🛡️ WorkingSafe – Plataforma de Bem-Estar e Gestão de Burnout  
-### DevOps – Azure Repos | Pipelines | ACR | ACI | Azure SQL  
+### DevOps – Azure Repos | Pipelines | ACR | ACI | Azure SQL  Prof Antonio
 **Integrantes:**  
 - Leonardo Bianchi – RM558576  
 - Mateus Teni Pierro – RM555125  
