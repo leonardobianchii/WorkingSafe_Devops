@@ -59,8 +59,8 @@ Todos os recursos foram criados usando Azure CLI:
 
 ✔ Resource Group  
 ✔ ACR  
-✔ ACI  
-✔ Azure SQL Server e Database  
+✔ ACI  Api 
+✔ ACI Banco de dados
 
 O script está na pasta `/scripts`.
 
