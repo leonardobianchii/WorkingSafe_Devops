@@ -2,10 +2,10 @@ spring:
   application:
     name: workingsafe
 
-  datasource:
-    url: jdbc:sqlserver://srv-workingsafe.database.windows.net:1433;database=db-workingsafe;encrypt=true;trustServerCertificate=false;loginTimeout=30;
-    username: rm558576
-    password: Fiap@devops2025
+    datasource:
+    url: jdbc:sqlserver://aci-sql-workingsafe.eastus.azurecontainer.io:1433;databaseName=db_workingsafe;encrypt=true;trustServerCertificate=true;loginTimeout=30;
+    username: sa
+    password: "Fiap@DevOps123!"
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
   jpa:
