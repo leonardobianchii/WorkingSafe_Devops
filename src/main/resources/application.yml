@@ -2,20 +2,18 @@ spring:
   application:
     name: workingsafe
 
-    datasource:
+  datasource:
     url: jdbc:sqlserver://aci-sql-workingsafe.eastus.azurecontainer.io:1433;databaseName=db_workingsafe;encrypt=true;trustServerCertificate=true;loginTimeout=30;
     username: sa
     password: "Fiap@DevOps123!"
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    properties:
+    jpa:
       hibernate:
-        format_sql: true
-    defer-datasource-initialization: false
+        ddl-auto: none
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.SQLServerDialect
 
   sql:
     init:
